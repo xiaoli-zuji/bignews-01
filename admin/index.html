@@ -54,7 +54,8 @@
 
         </div>
     </div>
-
+    <!-- 引入http.js文件 -->
+    <script src="./libs/http.js"></script>
     <script>
         // 入口函数
         $(function () {
@@ -74,7 +75,8 @@
             // jquery发送ajax请求,设置请求头,把token令牌带过去
             $.ajax({
                 type: 'get',
-                url: 'http://localhost:8080/api/v1/admin/user/info',
+                // url: 'http://localhost:8080/api/v1/admin/user/info',
+                url: BigNew.user_info,
                 // headers: {
                 //     'Authorization': localStorage.getItem('token')
                 // },
