@@ -32,16 +32,27 @@
                 </a>
             </div>
             <div class="level01">
-                <a href="#">
+                <a href="#" >
                     <i class="iconfont icon-icon-article"></i>
                     <span>文章管理</span>
                     <b class="iconfont icon-arrowdownl"></b>
                 </a>
             </div>
             <ul class="level02">
-                <li><a href="./article_list.html" target="main_frame"><i class="iconfont icon-previewright"></i><span>文章列表</span></a></li>
-                <li><a href="./article_release.html" target="main_frame"><i class="iconfont icon-previewright"></i><span>发表文章</span></a></li>
-                <li><a href="./article_category.html" target="main_frame"><i class="iconfont icon-previewright"></i><span>文章类别管理</span></a>
+                <li><a href="./article_list.html" target="main_frame">
+                        <i class="iconfont icon-previewright"></i>
+                        <span>文章列表</span>
+                    </a>
+                </li>
+                <li><a href="./article_release.html" target="main_frame">
+                        <i class="iconfont icon-previewright"></i>
+                        <span>发表文章</span>
+                    </a>
+                </li>
+                <li><a href="./article_category.html" target="main_frame">
+                        <i class="iconfont icon-previewright"></i>
+                        <span>文章类别管理</span>
+                    </a>
                 </li>
             </ul>
 
@@ -68,7 +79,8 @@
         </div>
         <!-- 右侧主体内容 -->
         <div class="main" id="main_body">
-            <iframe src="./main_count.html" name="main_frame" frameborder="0" style="width: 100%;height: 100%;"></iframe>
+            <iframe src="./main_count.html" name="main_frame" frameborder="0"
+                style="width: 100%;height: 100%;"></iframe>
         </div>
     </div>
     <!-- 引入http.js文件 -->
@@ -88,7 +100,7 @@
             // xhr.send();
 
 
-            // // 一进入到页面就发送ajax请求,获取管理员的相关信息,显示到页面上
+            // // 一. 一进入到页面就发送ajax请求,获取管理员的相关信息,显示到页面上
             // jquery发送ajax请求,设置请求头,把token令牌带过去
             $.ajax({
                 type: 'get',
@@ -107,16 +119,42 @@
                 }
             })
 
-            // 退出系统
+            // 二. 退出系统
             // 给退出按钮设置一个点击事件
             $('.logout').on('click', function (e) {
                 // 阻止a标签的默认跳转
                 e.preventDefault();
                 if (confirm('你确定要退出吗?')) {
+                    // 删除token
                     localStorage.removeItem('token');
+                    // 跳转到首页
                     window.location.href = './login.html';
                 }
             })
+
+            // 三. 左侧一级菜单(首页,文章管理,评论管理,个人中心)设置点击事件
+            $('div.level01').on('click', function () {
+                // 3.1 当前点击的这个一级菜单添加active这个类,其他兄弟移除这个类
+                $(this).addClass('active').siblings('.level01').removeClass('active');
+                // 3.2 判断一下当前点击的这个是不是 文章管理 这个一级菜单
+                if ($(this).index() == 1) {
+                    // 二级菜单ul 显示就隐藏 隐藏就显示
+                    $('ul.level02').slideToggle();
+                    // 小尖尖角(b标签)要做css动画(实际上就是添加/移除了一个类 rotate0)
+                    $(this).find('b').toggleClass('rotate0');
+
+                    // dom元素的单击事件,不仅会触发单机事件,还会触发超链接
+                    $('ul.level02>li:eq(0)>a')[0].click();
+                }
+            })
+
+            // 四. 二级菜单设置点击事件
+            $('ul.level02>li').on('click',function(){
+                // 添加一个active类
+                $(this).addClass('active').siblings().removeClass('active');
+            })
+
+
         })
     </script>
 </body>
