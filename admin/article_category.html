@@ -52,4 +52,40 @@
         </div>
     </div>
 
+    <script src="./libs/http.js"></script>
+    <!-- 准备一个模板 -->
+    <script id="category_temp" type="text/html">
+        {{each data v}}
+        <tr>
+            <td>{{v.name}}</td>
+            <td>{{v.slug}}</td>
+            <td class="text-center">
+                <a href="javascript:void(0)" data-id="{{v.id}}" data-toggle="modal" class=" btn btn-info btn-xs">编辑</a>
+                <a href="javascript:void(0)" data-id="{{v.id}}" class="btn btn-danger btn-xs">删除</a>
+            </td>
+        </tr>
+        {{/each}}
+    </script>
+    <script>
+        $(function () {
+            // 入口函数
+            // 一进入到页面,发送ajax请求,显示文章的所有类别
+            $.ajax({
+                type: 'get',
+                url: BigNew.category_list,
+                success: function (backData) {
+                    // console.log(backData);
+                    // 通过模板引擎的方式渲染到页面上
+                    if(backData.code==200){
+                        var resHtml= template('category_temp',backData);
+                        $('tbody').html(resHtml);
+                    }
+
+                }
+            });
+
+        })
+    </script>
+</body>
+
 </html>
