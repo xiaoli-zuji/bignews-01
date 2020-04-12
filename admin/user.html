@@ -24,7 +24,7 @@
                 <div class="form-group">
                     <label for="inputEmail1" class="col-sm-2 control-label">用户名称：</label>
                     <div class="col-sm-4">
-                        <input type="text" name="username" class="form-control username" id="inputEmail1" value="李思思">
+                        <input type="text" name="username" class="form-control username" id="inputEmail1" value="李思">
                     </div>
                 </div>
                 <div class="form-group">
@@ -43,8 +43,11 @@
                 <div class="form-group">
                     <label for="inputPassword3" class="col-sm-2 control-label">用户图标：</label>
                     <div class="col-sm-10">
+                        <!-- 预览用的img -->
                         <img src="images/2.jpg" alt="" class="user_pic">
-                        <input style="display: block" name="userPic" type="file" id="exampleInputFile">
+                        <!-- 实际开发的时候,这个选择文件的这个按钮基本不用,因为真的很丑.  -->
+                        <!-- 实际开发的时候一般的会让ui小姐姐设计一个好看的按钮放在这里,丑的隐藏 -->
+                        <input style="display: none" name="userPic" type="file" id="exampleInputFile">
                         <!-- 给label标签的for属性赋值,值是input标签的id,那这样的话点击label就相当于点击了input -->
                         <br>
                         <label for="exampleInputFile">
@@ -68,6 +71,87 @@
             </form>
         </div>
     </div>
+    <script src="./libs/http.js"></script>
+    <script>
+        $(function () {
+            // 编辑第一步
+            // 一进到页面,发送ajax请求,获取用户信息,显示到页面上
+            $.ajax({
+                type: 'get',
+                url: BigNew.user_detail,
+                success: function (backData) {
+                    // console.log(backData);
+                    if (backData.code == 200) {
+                        // 个人信息显示在对应的标签中
+                        for (var key in backData.data) {
+                            $('.' + key).val(backData.data[key]);
+                        }
+                        $('.user_pic').attr('src', backData.data.userPic);
+                    }
+                }
+            });
+
+            // 二: 图片预览
+            $('#exampleInputFile').on('change', function () {
+                // 获取选中的头像
+                var file1 = this.files[0];
+                // 给这个头像设置一个url
+                var url = URL.createObjectURL(file1);
+                // 把这个url赋值给预览用的img的src属性
+                $('.user_pic').attr('src', url);
+            })
+
+            // 三: 编辑第三步
+            // 给修改按钮设置一个点击事件
+            $('.btn-edit').on('click', function (e) {
+                // 取消form表单中submit的默认提交行为
+                e.preventDefault();
+                // 获取用户的相关信息
+                // 使用formData提交
+                // form获取数据
+                var form1 = document.querySelector('form');
+                var fd = new FormData(form1);
+                // ajax发送请求
+                $.ajax({
+                    type: 'post',
+                    url: BigNew.user_edit,
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function (backData) {
+                        // console.log(backData);
+                        if (backData.code == 200) {
+                            alert('更新成功');
+                            //4.完成修改,主页更新新的内容.
+                            // 第一种直接更新页面
+                            // parent.window.location.reload();
+
+                            // 第二种:发送ajax请求,获取新的个人信息,找到父页面上的标签,内容显示对应的标签上
+                            $.ajax({
+                                type: 'get',
+                                url: BigNew.user_info,
+                                success: function (backData) {
+                                    // console.log(backData);
+                                    if (backData.code == 200) {
+                                        parent.$('.user_info span>i').text(backData.data.nickname);
+                                        parent.$('.user_info img').attr('src', backData.data.userPic);
+                                        parent.$('.user_center_link img').attr('src', backData.data.userPic);
+                                    }
+                                }
+                            })
+                        }
+                    }
+                });
+
+
+
+
+            })
+
+
+
+        })
+    </script>
 </body>
 
 </html>
