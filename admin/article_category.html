@@ -63,6 +63,8 @@
                 </div>
                 <div class="modal-body">
                     <form>
+                        <!-- 隐藏域,用来保存编辑类别的id -->
+                        <input type="hidden" id="categoryId">
                         <div class="form-group">
                             <label for="recipient-name" class="control-label">分类名称:</label>
                             <input type="text" class="form-control" id="recipient-name">
@@ -99,18 +101,21 @@
         $(function () {
             // 入口函数
             // 1. 一进入到页面,发送ajax请求,显示文章的所有类别
-            $.ajax({
-                type: 'get',
-                url: BigNew.category_list,
-                success: function (backData) {
-                    // console.log(backData);
-                    // 通过模板引擎的方式渲染到页面上
-                    if (backData.code == 200) {
-                        var resHtml = template('category_temp', backData);
-                        $('tbody').html(resHtml);
+            function getData() {
+                $.ajax({
+                    type: 'get',
+                    url: BigNew.category_list,
+                    success: function (backData) {
+                        // console.log(backData);
+                        // 通过模板引擎的方式渲染到页面上
+                        if (backData.code == 200) {
+                            var resHtml = template('category_temp', backData);
+                            $('tbody').html(resHtml);
+                        }
                     }
-                }
-            });
+                });
+            }
+            getData();
 
             // 2. 判断是新增按钮还是编辑按钮 弹出的模态框
             // show.bs.modal	这个事件是模态框显示的时候立即触发的。
@@ -123,6 +128,78 @@
                 } else {
                     $('#myModalLabel').text('编辑分类');
                     $('#btnAddOrEdit').text('编辑').addClass('btn-success').removeClass('btn-primary');
+                    // 编辑的第一步
+                    // 把当前点击的这一行内容,显示在模态框中
+                    $('#recipient-name').val($(e.relatedTarget).parent().prev().prev().text().trim());
+                    $('#message-text').val($(e.relatedTarget).parent().prev().text().trim());
+                    $('#categoryId').val($(e.relatedTarget).attr('data-id'));
+                }
+            })
+
+            // 3.给模态框中的新增或者编辑按钮设置一个点击事件
+            $('#btnAddOrEdit').on('click', function () {
+                if ($(this).hasClass('btn-primary')) {
+                    // 新增
+                    // 获取用户输入的新增的 分类名和分类别名
+                    var categoryName = $('#recipient-name').val().trim();
+                    var categorySlug = $('#message-text').val().trim();
+                    // 发送ajax请求
+                    $.ajax({
+                        type: 'post',
+                        url: BigNew.category_add,
+                        data: {
+                            name: categoryName,
+                            slug: categorySlug
+                        },
+                        success: function (backData) {
+                            // console.log(backData);
+                            if (backData.code == 201) {
+                                alert('新增成功');
+                                // 更新页面中的数据
+                                getData();
+                                // 隐藏模态框
+                                $('#myModal').modal('hide');
+                                // 清空模态框中的内容
+                                $('#recipient-name').val('');
+                                $('#message-text').val('');
+                            }
+                        }
+                    })
+                } else {
+                    // 编辑
+                    // 获取用户输入的编辑的 分类名和分类别名
+                    var categoryName = $('#recipient-name').val().trim();
+                    var categorySlug = $('#message-text').val().trim();
+                    var categoryId = $('#categoryId').val().trim();
+                    // 非空判断
+                    if (categoryName == '' || categorySlug == '') {
+                        alert('分类名和分类别名不能为空');
+                        return;
+                    }
+                    // 发送ajax请求
+                    $.ajax({
+                        type: 'post',
+                        url: BigNew.category_edit,
+                        data: {
+                            id: categoryId,
+                            name: categoryName,
+                            slug: categorySlug
+                        },
+                        success: function (backData) {
+                            // console.log(backData);
+
+                            if (backData.code == 200) {
+                                alert('修改成功');
+                                // 更新数据
+                                getData();
+                                // 隐藏模态框
+                                $('#myModal').modal('hide');
+                            } else {
+                                alert('分类名和分类别名还没修改');
+                            }
+                        }
+                    })
+
                 }
             })
 
