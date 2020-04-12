@@ -92,7 +92,7 @@
             <td>{{v.slug}}</td>
             <td class="text-center">
                 <a href="javascript:void(0)" data-id="{{v.id}}" data-toggle="modal"  data-target="#myModal" class=" btn btn-info btn-xs">编辑</a>
-                <a href="javascript:void(0)" data-id="{{v.id}}" class="btn btn-danger btn-xs">删除</a>
+                <a href="javascript:void(0)" data-id="{{v.id}}" class="btn btn-danger btn-xs btn-delete">删除</a>
             </td>
         </tr>
         {{/each}}
@@ -199,7 +199,33 @@
                             }
                         }
                     })
+                }
+            })
 
+            // 4.文章类别删除
+            // 给删除按钮设置点击事件
+            $('tbody').on('click', '.btn-delete', function () {
+                var that = $(this);//把当前点击的这个按钮用that保存一下
+                if (confirm('你确定要删除吗?')) {
+                    // 获取当前要删除这个按钮的id
+                    var categoryId = $(this).attr('data-id');
+                    // 发送ajax请求
+                    $.ajax({
+                        type: 'post',
+                        url: BigNew.category_delete,
+                        data: {
+                            id: categoryId
+                        },
+                        success: function (backData) {
+                            if (backData.code == 204) {
+                                alert('删除成功');
+                                // 第一种方法:直接重新加载数据
+                                // getData();
+                                // 第二种方法:删除dom树
+                                that.parent().parent().remove();
+                            }
+                        }
+                    })
                 }
             })
 
