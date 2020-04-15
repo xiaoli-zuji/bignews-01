@@ -276,8 +276,8 @@
         {{/each}}
      </script>
 
-     <!-- 四:最新评论 模板 -->
-     <script id="comment_temp" type="text/html">
+    <!-- 四:最新评论 模板 -->
+    <script id="comment_temp" type="text/html">
         {{each data v}}
         <li>
             <span>{{v.author.substring(0,1)}}</span>
@@ -287,12 +287,17 @@
         {{/each}}
      </script>
 
-     <!-- 五:焦点关注 模板 -->
-     <script id="attention_temp" type="text/html">
+    <!-- 五:焦点关注 模板 -->
+    <script id="attention_temp" type="text/html">
         {{each data v}}
         <li><a href="./article.html?id={{v.id}}">{{v.intro}}</a></li>
         {{/each}}
-
+     </script>
+    <!-- 六:文章类别 模板 -->
+    <script id="category_temp" type="text/html">
+        {{each data v}}
+        <li><a href="./list.html?categoryId={{v.id}}">{{v.name}}</a></li>
+        {{/each}}
      </script>
 
 
@@ -339,39 +344,54 @@
                         //     $('.hotrank_list>li').eq(i).children('a').attr('href', './article.html?id=' + backData.data[i].id);
                         // }
                         // 方法二:调用模板引擎
-                        var resHtml= template('rankList_temp',backData);
+                        var resHtml = template('rankList_temp', backData);
                         $('.hotrank_list').html(resHtml);
                     }
                 }
             })
-        
-             //四:最新评论
-             $.ajax({
-                 type:'get',
-                 url:'http://localhost:8080/api/v1/index/latest_comment',
-                 success:function(backData){
+
+            //四:最新评论
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8080/api/v1/index/latest_comment',
+                success: function (backData) {
                     //  console.log(backData);
-                    if(backData.code==200){
-                        var resHtml= template('comment_temp',backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('comment_temp', backData);
                         $('.comment_list').html(resHtml);
                     }
-                 }
-             })
-        
-              //五:焦点关注
-              $.ajax({
-                  type:'get',
-                  url:'http://localhost:8080/api/v1/index/attention',
-                  success:function(backData){
+                }
+            })
+
+            //五:焦点关注
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8080/api/v1/index/attention',
+                success: function (backData) {
                     //   console.log(backData);
-                    if(backData.code==200){
-                        var resHtml= template('attention_temp',backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('attention_temp', backData);
                         $('.guanzhu_list').html(resHtml);
                     }
-                  }
-
-              })
+                }
             })
+
+            //六:文章类别
+            $.ajax({
+                type: 'get',
+                url: 'http://localhost:8080/api/v1/index/category',
+                success: function (backData) {
+                    //    console.log(backData);
+                    if (backData.code == 200) {
+                        var resHtml = template('category_temp', backData);
+                        // 竖着的
+                        $('.level_two').html('<li class="up"></li>' + resHtml);
+                        // 横着的
+                        $('.left_menu').html(resHtml);
+                    }
+                }
+            })
+        })
     </script>
 </body>
 
