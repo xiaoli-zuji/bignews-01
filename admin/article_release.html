@@ -61,7 +61,7 @@
                     <!-- 引入日期插件 -->
                     <div class="jeinpbox  col-sm-4">
                         <input type="text" name="date" class="jeinput" id="testico" placeholder="YYYY-MM-DD">
-                        <div class="icons jebtns" onclick="jeDate('#testico',{trigger:false,format: 'YYYY-MM-DD'})">
+                        <div class="icons jebtns" onclick="jeDate('#testico',{zIndex: 21000, trigger:false,format: 'YYYY-MM-DD'})">
                         </div>
                     </div>
                 </div>
@@ -117,12 +117,20 @@
             // 三.日期插件
             jeDate('#testico', {
                 isinitVal: true,    //4.是否初始化时间，默认不初始化时间
+                zIndex: 21000,  //弹出层的层级高度
                 format: 'YYYY-MM-DD',
-                zIndex: 2099,  //弹出层的层级高度
                 isTime: false,
                 minDate: "2014-09-19 00:00:00"
             });
 
+            // //三: 日期插件
+            // jeDate("#testico", {
+            //     isinitVal: true, //是否初始化时间，默认不初始化时间
+            //     zIndex: 20999,  //弹出层的层级高度
+            //     format: "YYYY-MM-DD",
+            //     isTime: false,
+            //     minDate: "2014-09-19 00:00:00"
+            // })
 
             //四:富文本编辑器wangEditor
             var E = window.wangEditor;
